@@ -1,0 +1,23 @@
+<div class="header-icon">
+  <mat-icon>local_bar</mat-icon>
+</div>
+<div class="header-label">
+  <mat-label>
+    <span>{{selectedProduct ? 'Update Product' : 'Add New Product'}}</span>
+  </mat-label>
+</div>
+<div class="product-container">
+  <mat-form-field hintLabel="Max 50 characters">
+    <input [formControl]="nameFC" matInput #input maxlength="50" placeholder="Enter some input">
+    <mat-hint align="end">{{input.value?.length || 0}}/50</mat-hint>
+  </mat-form-field>
+  <mat-error *ngIf="nameFC.touched && nameFC.hasError('required')">
+    Name is required.
+  </mat-error>
+  <mat-error *ngIf="nameFC.touched && nameFC.hasError('maxlength')">
+    Name should not exceed {{nameFC.errors[maxlength]}} characters.
+  </mat-error>
+</div>
+
+<button [disabled]="nameFC.errors" mat-button class="save-button mat-raised-button mat-primary"
+  (click)="saveUpdateProduct()">{{selectedProduct ? 'Update' : 'Save'}}</button>

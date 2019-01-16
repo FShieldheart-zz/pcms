@@ -1,0 +1,22 @@
+.product-container {
+    margin-top:50px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .product-container > * {
+    width: 100%;
+  }
+
+  .header-icon{
+    float:left;
+  }
+
+  .header-label{
+    margin-top: 4px;
+    float:left;
+  }
+
+  .save-button{
+    margin-top: 20px;
+  }
