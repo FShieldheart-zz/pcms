@@ -1,10 +1,9 @@
+import { DialogHelperService } from 'src/services/dialog-helper.service';
 import { Product } from './../../../models/product';
 import { ProductService } from './../../../services/product.service';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { MatDialog, MatDialogRef } from '@angular/material';
-import { ConfirmationDialogComponent } from '../confirmation-dialog/confirmation-dialog.component';
 
 @Component({
   selector: 'app-add-update-product',
@@ -15,20 +14,22 @@ export class AddUpdateProductComponent implements OnInit {
 
   nameFC: FormControl;
   selectedProduct: Product;
+  maxLengthValue = 50;
 
   constructor(
     private _productService: ProductService,
     private _router: Router,
     private _activatedRoute: ActivatedRoute,
-    private _matDialog: MatDialog
+    private _dialogHelperService: DialogHelperService
   ) { }
 
   ngOnInit() {
     this.nameFC = new FormControl('', [
       Validators.required,
-      Validators.maxLength(50)
+      Validators.maxLength(this.maxLengthValue)
     ]);
 
+    // Getting the product using query params (if any)
     this._activatedRoute.queryParams.subscribe(queryParams => {
       if (queryParams['productid']) {
         this._productService.get(queryParams['productid']).subscribe(product => {
@@ -41,27 +42,44 @@ export class AddUpdateProductComponent implements OnInit {
   }
 
   saveUpdateProduct() {
+
+    // Product Update
     if (this.selectedProduct) {
+      this._dialogHelperService.showConfirmationDialog(250, 'Are you sure wanting to update?')
+        .afterClosed().subscribe(
+          result => {
+            if (result) {
+              this.selectedProduct.name = this.nameFC.value;
+              this._productService.update(this.selectedProduct.id, this.selectedProduct).subscribe(updateResult => {
+                if (updateResult) {
+                  this._router.navigate(['/product']);
+                } else {
+                  this._dialogHelperService.showMessageDialog(250, 'Updating the product has been failed.');
+                }
+              });
+            }
+          },
+          error => {
+            this._dialogHelperService.showMessageDialog(250, error.message);
+          }
+        );
 
-      const dialogRef = this._matDialog.open(ConfirmationDialogComponent, {
-        width: '250px',
-        data: 'Are you sure wanting to update?'
-      });
-
-      dialogRef.afterClosed().subscribe(result => {
-        if (result) {
-          this.selectedProduct.name = this.nameFC.value;
-          this._productService.update(this.selectedProduct.id, this.selectedProduct).subscribe(updateResult => {
-            this._router.navigate(['/product']);
-          });
-        }
-      });
+      // Product Insert
     } else {
       const product = new Product();
       product.name = this.nameFC.value;
-      this._productService.insert(product).subscribe(insertResult => {
-        this._router.navigate(['/product']);
-      });
+      this._productService.insert(product).subscribe(
+        insertResult => {
+          if (insertResult) {
+            this._router.navigate(['/product']);
+          } else {
+            this._dialogHelperService.showMessageDialog(250, 'Inserting new product has been failed.');
+          }
+        },
+        error => {
+          this._dialogHelperService.showMessageDialog(250, error.message);
+        }
+      );
     }
   }
 

@@ -1,3 +1,4 @@
+import { MessageDialogComponent } from './../main/message-dialog/message-dialog.component';
 import { ProductService } from 'src/services/product.service';
 import {
   MatButtonModule, MatCheckboxModule, MatMenuModule, MatIconModule,
@@ -9,9 +10,11 @@ import { CommonModule } from '@angular/common';
 import { HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ConfirmationDialogComponent } from '../main/confirmation-dialog/confirmation-dialog.component';
+import { DialogHelperService } from 'src/services/dialog-helper.service';
 
 @NgModule({
   declarations: [
+
   ],
   imports: [
     CommonModule,
@@ -49,10 +52,12 @@ import { ConfirmationDialogComponent } from '../main/confirmation-dialog/confirm
     MatDialogModule
   ],
   providers: [
-    ProductService
+    ProductService,
+    DialogHelperService
   ],
   entryComponents: [
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    MessageDialogComponent
   ]
 })
 export class ShareModule { }

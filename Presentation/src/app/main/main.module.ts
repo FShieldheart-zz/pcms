@@ -1,3 +1,4 @@
+import { MessageDialogComponent } from './message-dialog/message-dialog.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ListProductComponent } from './list-product/list-product.component';
@@ -12,7 +13,8 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     HomeComponent,
     ListProductComponent,
     AddUpdateProductComponent,
-    ConfirmationDialogComponent
+    ConfirmationDialogComponent,
+    MessageDialogComponent
   ],
   imports: [
     CommonModule,
