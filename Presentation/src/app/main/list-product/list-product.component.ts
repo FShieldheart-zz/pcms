@@ -26,6 +26,14 @@ export class ListProductComponent implements OnInit {
   ) { }
 
   // <--- Helpers --->
+  private ShowMessageDialog(width: number, message: string) {
+    this._dialogHelperService.showMessageDialog(width, message);
+  }
+
+  private ShowConfirmationDialog(width: number, message: string) {
+    return this._dialogHelperService.showConfirmationDialog(width, message);
+  }
+
   public getServerData(event: PageEvent) {
     this._productService.getAll(event.pageIndex, event.pageSize).subscribe(products => {
       const existingProducts = this.dataSource.data as Product[];
@@ -54,7 +62,7 @@ export class ListProductComponent implements OnInit {
         this.length = this.productLength;
       },
       error => {
-        this._dialogHelperService.showMessageDialog(250, error.message);
+        this.ShowMessageDialog(250, error.message);
       },
       () => {
         // Retrieving first page of the data following the counting
@@ -65,7 +73,7 @@ export class ListProductComponent implements OnInit {
             this.dataSource.sort = this.sort;
           },
           error => {
-            this._dialogHelperService.showMessageDialog(250, error.message);
+            this.ShowMessageDialog(250, error.message);
           }
         );
       }
@@ -75,7 +83,7 @@ export class ListProductComponent implements OnInit {
 
   // Product Deletion
   deleteProduct(id: number) {
-    this._dialogHelperService.showConfirmationDialog(250, 'Are you sure wanting to delete?')
+    this.ShowConfirmationDialog(250, 'Are you sure wanting to delete?')
       .afterClosed().subscribe(
         result => {
           if (result) {
@@ -85,7 +93,7 @@ export class ListProductComponent implements OnInit {
                 products = products.filter(p => p.id !== id);
                 this.dataSource.data = products;
               } else {
-                this._dialogHelperService.showMessageDialog(250, 'Deleting the product has been failed.');
+                this.ShowMessageDialog(250, 'Deleting the product has been failed.');
               }
             });
           }

@@ -23,6 +23,16 @@ export class AddUpdateProductComponent implements OnInit {
     private _dialogHelperService: DialogHelperService
   ) { }
 
+  // <--- Helpers --->
+  private ShowMessageDialog(width: number, message: string) {
+    this._dialogHelperService.showMessageDialog(width, message);
+  }
+
+  private ShowConfirmationDialog(width: number, message: string) {
+    return this._dialogHelperService.showConfirmationDialog(width, message);
+  }
+  // <--- Helpers --->
+
   ngOnInit() {
     this.nameFC = new FormControl('', [
       Validators.required,
@@ -45,7 +55,7 @@ export class AddUpdateProductComponent implements OnInit {
 
     // Product Update
     if (this.selectedProduct) {
-      this._dialogHelperService.showConfirmationDialog(250, 'Are you sure wanting to update?')
+      this.ShowConfirmationDialog(250, 'Are you sure wanting to update?')
         .afterClosed().subscribe(
           result => {
             if (result) {
@@ -54,13 +64,13 @@ export class AddUpdateProductComponent implements OnInit {
                 if (updateResult) {
                   this._router.navigate(['/product']);
                 } else {
-                  this._dialogHelperService.showMessageDialog(250, 'Updating the product has been failed.');
+                  this.ShowMessageDialog(250, 'Updating the product has been failed.');
                 }
               });
             }
           },
           error => {
-            this._dialogHelperService.showMessageDialog(250, error.message);
+            this.ShowMessageDialog(250, error.message);
           }
         );
 
@@ -73,7 +83,7 @@ export class AddUpdateProductComponent implements OnInit {
           if (insertResult) {
             this._router.navigate(['/product']);
           } else {
-            this._dialogHelperService.showMessageDialog(250, 'Inserting new product has been failed.');
+            this.ShowMessageDialog(250, 'Inserting new product has been failed.');
           }
         },
         error => {
