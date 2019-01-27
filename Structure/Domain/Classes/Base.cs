@@ -10,20 +10,19 @@ namespace Structure.Domain.Classes
     {
         [PrimaryKey, AutoIncrement]
         [Column("p_id")]
-        [DataMember(Name = "id")]
         public int Id { get; set; }
 
         [Column("created_date")]
-        [DataMember(Name = "created_date")]
-        public DateTime CreatedDate { get; set; }
+        [NotNull]
+        public DateTime? CreatedDate { get; set; }
 
         [Column("updated_date")]
-        [DataMember(Name = "updated_date")]
-        public DateTime UpdatedDate { get; set; }
+        [NotNull]
+        public DateTime? UpdatedDate { get; set; }
 
         [Column("is_deleted")]
-        [DataMember(Name = "is_deleted")]
-        public bool IsDeleted { get; set; }
+        [NotNull]
+        public bool? IsDeleted { get; set; }
 
         public Base()
         {

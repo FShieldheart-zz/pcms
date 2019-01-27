@@ -1,5 +1,6 @@
 ﻿using API.Helper.Classes;
-using API.Model.Classes;
+using API.Model.Classes.Persistence;
+using API.Model.Classes.View;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
@@ -29,59 +30,69 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductModel>>> Get([FromQuery]int pageIndex = 0, [FromQuery]int pageSize = 10)
+        public async Task<ActionResult<IEnumerable<ProductViewModel>>> Get([FromQuery]int pageIndex = 0, [FromQuery]int pageSize = 10)
         {
             if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Product> products))
             {
-                return Ok(products.Skip((pageIndex) * pageSize).Take(pageSize));
+                products = products.Skip((pageIndex) * pageSize).Take(pageSize);
+            }
+            else
+            {
+                products = await _productService.GetProductsAsync();
+
+                _memoryCache.Set(Startup.InMemoryCacheKey, products, TimeSpan.FromMinutes(Startup.CacheTimeoutMinute));
+
+                products = products.Skip((pageIndex) * pageSize).Take(pageSize);
             }
 
-            products = await _productService.GetProductsAsync();
-
-            _memoryCache.Set(Startup.InMemoryCacheKey, products, TimeSpan.FromMinutes(30));
-
-            return Ok(products.Skip((pageIndex) * pageSize).Take(pageSize));
+            return Ok(_mapper.Map<IEnumerable<ProductViewModel>>(products));
         }
 
         [HttpGet("count")]
-        public async Task<ActionResult<IEnumerable<ProductModel>>> Count()
+        public async Task<ActionResult<int>> Count()
         {
+            int productCount;
             if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Product> products))
             {
-                return Ok(products.Count());
+                productCount = products.Count();
             }
-
-            int productCount = (await _productService.CountProductsAsync());
-
-            _memoryCache.Set(Startup.InMemoryCacheKey, products, TimeSpan.FromMinutes(30));
+            else
+            {
+                productCount = await _productService.CountProductsAsync();
+            }
 
             return Ok(productCount);
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<string>> Get(int id)
+        public async Task<ActionResult<ProductViewModel>> Get(int id)
         {
+            Product existedProduct;
             if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Product> products))
             {
-                return Ok(products.FirstOrDefault(p => p.Id.Equals(id)));
+                existedProduct = products.FirstOrDefault(p => p.Id.Equals(id));
+            }
+            else
+            {
+                existedProduct = await _productService.GetProductAsync(id);
             }
 
-            return Ok(await _productService.GetProductAsync(id));
+            return Ok(_mapper.Map<ProductViewModel>(existedProduct));
         }
 
         [HttpPost]
-        public async Task<IActionResult> Post([FromBody] ProductModel productModel)
+        public async Task<ActionResult<bool>> Post([FromBody] ProductPersistenceModel productPersistenceModel)
         {
-            if (productModel == null)
+            if (productPersistenceModel == null)
             {
-                return BadRequest("User can not be null.");
+                return BadRequest("Product can not be null.");
             }
             else if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.GetErrors());
             }
 
-            Product product = _mapper.Map<Product>(productModel);
+            Product product = _mapper.Map<Product>(productPersistenceModel);
 
             bool insertResult = await _productService.AddAsync(product);
 
@@ -91,10 +102,10 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, [FromBody] ProductModel productModel)
+        public async Task<ActionResult<bool>> Put(int id, [FromBody] ProductPersistenceModel productPersistenceModel)
         {
             Product product = await _productService.GetProductAsync(id);
-            product = _mapper.Map(productModel, product);
+            product = _mapper.Map(productPersistenceModel, product);
 
             bool updateResult = await _productService.UpdateAsync(product);
 
@@ -104,7 +115,7 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult<bool>> Delete(int id)
         {
             bool deleteResult = await _productService.DeleteAsync(id);
 

@@ -25,6 +25,7 @@ namespace API
 
         public static readonly string InMemoryCacheKey = "pcms-imck";
         public static string ConnectionString { get; private set; }
+        public static long CacheTimeoutMinute { get; private set; }
 
         public Startup(IConfiguration configuration)
         {
@@ -39,6 +40,7 @@ namespace API
             dynamic configurationJson = JObject.Parse(configurationString);
             ConnectionString = configurationJson["SqliteConnectionString"].ToString();
             _logPath = configurationJson["LoggingPath"].ToString();
+            CacheTimeoutMinute = long.Parse(configurationJson["CacheTimeoutMinute"].ToString());
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -66,7 +68,9 @@ namespace API
             ReadConfiguration();
 
             services.AddScoped<IGeneric<Product>, Generic<Product>>();
+            services.AddScoped<IGeneric<Campaign>, Generic<Campaign>>();
             services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<ICampaignService, CampaignService>();
             services.AddScoped<IMainDbContext, MainDbContext>();
             services.AddSingleton<IDatabaseOptions, DatabaseOptions>();
         }

@@ -13,7 +13,6 @@ namespace Structure.Domain.Classes
         [Column("product_name")]
         [Indexed]
         [MaxLength(50)]
-        [DataMember(Name = "name")]
         public string Name { get; set; }
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]
@@ -22,7 +21,14 @@ namespace Structure.Domain.Classes
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(Name);
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                stringBuilder.Append(@"N\A");
+            }
+            else
+            {
+                stringBuilder.Append(Name);
+            }
             return stringBuilder.ToString();
         }
     }

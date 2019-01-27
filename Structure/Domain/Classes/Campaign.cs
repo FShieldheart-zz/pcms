@@ -11,35 +11,53 @@ namespace Structure.Domain.Classes
     public class Campaign : Base
     {
         [Column("campaign_name")]
+        [NotNull]
         [Indexed]
         [MaxLength(50)]
-        [DataMember(Name = "name")]
         public string Name { get; set; }
 
         [Column("campaign_start_date")]
-        [DataMember(Name = "start_date")]
-        public DateTime StartDate { get; set; }
+        [NotNull]
+        public DateTime? StartDate { get; set; }
 
         [Column("campaign_end_date")]
-        [DataMember(Name = "end_date")]
-        public DateTime EndDate { get; set; }
+        [NotNull]
+        public DateTime? EndDate { get; set; }
 
         [Column("campaign_is_active")]
-        [DataMember(Name = "is_active")]
-        public bool IsActive { get; set; }
+        [NotNull]
+        public bool? IsActive { get; set; }
+
+        [Column("campaign_product_id")]
+        [ForeignKey(typeof(Product))]
+        [NotNull]
+        public int? ProductId { get; set; }
 
         [ManyToOne]
-        [DataMember(Name = "product")]
+        [NotNull]
         public Product Product { get; set; }
 
         public override string ToString()
         {
             StringBuilder stringBuilder = new StringBuilder();
-            stringBuilder.Append(Name);
-            stringBuilder.Append(", ");
-            stringBuilder.Append(StartDate.ToShortDateString());
-            stringBuilder.Append(", ");
-            stringBuilder.Append(EndDate.ToShortDateString());
+            if (string.IsNullOrWhiteSpace(Name))
+            {
+                stringBuilder.Append(@"N\A");
+            }
+            else
+            {
+                stringBuilder.Append(Name);
+            }
+            if (StartDate.HasValue)
+            {
+                stringBuilder.Append(", ");
+                stringBuilder.Append(StartDate.Value.ToShortDateString());
+            }
+            if (EndDate.HasValue)
+            {
+                stringBuilder.Append(", ");
+                stringBuilder.Append(EndDate.Value.ToShortDateString());
+            }
             return stringBuilder.ToString();
         }
     }

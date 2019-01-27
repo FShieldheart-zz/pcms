@@ -1,0 +1,30 @@
+.campaign-container {
+    margin-top:50px;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .campaign-container > * {
+    width: 100%;
+  }
+
+  .header-icon{
+    float:left;
+  }
+
+  .header-label{
+    margin-top: 4px;
+    float:left;
+  }
+
+  .save-button{
+    margin-top: 20px;
+  }
+
+  .start-date-mff{
+    margin-top:30px;
+  }
+
+  .end-date-mff{
+    margin-top:30px;
+  }

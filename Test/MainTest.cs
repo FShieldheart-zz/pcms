@@ -1,5 +1,5 @@
 using API.MappingProfile.Classes;
-using API.Model.Classes;
+using API.Model.Classes.Persistence;
 using AutoMapper;
 using NUnit.Framework;
 using Structure.Domain.Classes;
@@ -41,7 +41,7 @@ namespace Tests
                 Name = mockName
             };
 
-            ProductModel mockProductModel = new ProductModel()
+            ProductPersistenceModel mockProductModel = new ProductPersistenceModel()
             {
                 Name = mockNewName
             };

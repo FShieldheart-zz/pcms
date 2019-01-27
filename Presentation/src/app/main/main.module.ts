@@ -1,3 +1,4 @@
+import { ListCampaignComponent } from './list-campaign/list-campaign.component';
 import { MessageDialogComponent } from './message-dialog/message-dialog.component';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -7,6 +8,7 @@ import { MainRoutingModule } from './main-routing.module';
 import { ShareModule } from '../share/share.module';
 import { AddUpdateProductComponent } from './add-update-product/add-update-product.component';
 import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-dialog.component';
+import { AddUpdateCampaignComponent } from './add-update-campaign/add-update-campaign.component';
 
 @NgModule({
   declarations: [
@@ -14,7 +16,9 @@ import { ConfirmationDialogComponent } from './confirmation-dialog/confirmation-
     ListProductComponent,
     AddUpdateProductComponent,
     ConfirmationDialogComponent,
-    MessageDialogComponent
+    MessageDialogComponent,
+    AddUpdateCampaignComponent,
+    ListCampaignComponent
   ],
   imports: [
     CommonModule,

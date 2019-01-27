@@ -1,15 +1,15 @@
-import { Product } from 'src/models/product';
+import { Campaign } from 'src/models/campaign';
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatPaginator, MatTableDataSource, MatSort, PageEvent } from '@angular/material';
-import { ProductService } from 'src/services/product.service';
+import { CampaignService } from 'src/services/campaign.service';
 import { DialogHelperService } from 'src/services/dialog-helper.service';
 
 @Component({
-  selector: 'app-list-product',
-  templateUrl: './list-product.component.html',
-  styleUrls: ['./list-product.component.scss']
+  selector: 'app-list-campaign',
+  templateUrl: './list-campaign.component.html',
+  styleUrls: ['./list-campaign.component.scss']
 })
-export class ListProductComponent implements OnInit {
+export class ListCampaignComponent implements OnInit {
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -17,11 +17,11 @@ export class ListProductComponent implements OnInit {
   displayedColumns: string[] = ['id', 'name', 'actions'];
   dataSource: MatTableDataSource<any>;
 
-  productLength: number;
+  campaignLength: number;
   length: number;
 
   constructor(
-    private _productService: ProductService,
+    private _campaignService: CampaignService,
     private _dialogHelperService: DialogHelperService
   ) { }
 
@@ -35,15 +35,15 @@ export class ListProductComponent implements OnInit {
   }
 
   public getServerData(event: PageEvent) {
-    this._productService.getAll(event.pageIndex, event.pageSize).subscribe(products => {
-      const existingProducts = this.dataSource.data as Product[];
-      products.forEach(element => {
-        if (!existingProducts.find(p => p.id === element.id)) {
-          existingProducts.push(element);
+    this._campaignService.getAll(event.pageIndex, event.pageSize).subscribe(campaigns => {
+      const existingCampaigns = this.dataSource.data as Campaign[];
+      campaigns.forEach(element => {
+        if (!existingCampaigns.find(p => p.id === element.id)) {
+          existingCampaigns.push(element);
         }
       });
-      this.dataSource.data = existingProducts;
-      this.length = this.productLength;
+      this.dataSource.data = existingCampaigns;
+      this.length = this.campaignLength;
     });
     return event;
   }
@@ -55,20 +55,20 @@ export class ListProductComponent implements OnInit {
 
   ngOnInit() {
 
-    // Counting the products for server side paging
-    this._productService.countAll().subscribe(
-      productCount => {
-        this.productLength = productCount;
-        this.length = this.productLength;
+    // Counting the campaigns for server side paging
+    this._campaignService.countAll().subscribe(
+      campaignCount => {
+        this.campaignLength = campaignCount;
+        this.length = this.campaignLength;
       },
       error => {
         this.ShowMessageDialog(250, error.message);
       },
       () => {
         // Retrieving first page of the data following the counting
-        this._productService.getAll(0, 2).subscribe(
-          products => {
-            this.dataSource = new MatTableDataSource<Product>(products);
+        this._campaignService.getAll(0, 2).subscribe(
+          campaigns => {
+            this.dataSource = new MatTableDataSource<Campaign>(campaigns);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
           },
@@ -81,19 +81,19 @@ export class ListProductComponent implements OnInit {
 
   }
 
-  // Product Deletion
-  deleteProduct(id: number) {
+  // Campaign Deletion
+  deleteCampaign(id: number) {
     this.ShowConfirmationDialog(250, 'Are you sure wanting to delete?')
       .afterClosed().subscribe(
         result => {
           if (result) {
-            this._productService.delete(id).subscribe(deleteResult => {
+            this._campaignService.delete(id).subscribe(deleteResult => {
               if (deleteResult) {
-                let products = (this.dataSource.data as Product[]);
-                products = products.filter(p => p.id !== id);
-                this.dataSource.data = products;
+                let campaigns = (this.dataSource.data as Campaign[]);
+                campaigns = campaigns.filter(p => p.id !== id);
+                this.dataSource.data = campaigns;
               } else {
-                this.ShowMessageDialog(250, 'Deleting the product has been failed.');
+                this.ShowMessageDialog(250, 'Deleting the campaign has been failed.');
               }
             });
           }

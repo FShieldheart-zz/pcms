@@ -1,8 +1,9 @@
+import { CampaignService } from './../../services/campaign.service';
 import { MessageDialogComponent } from './../main/message-dialog/message-dialog.component';
 import { ProductService } from 'src/services/product.service';
 import {
   MatButtonModule, MatCheckboxModule, MatMenuModule, MatIconModule,
-  MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule, MatDialogModule
+  MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule, MatDialogModule, MatDatepickerModule, MatNativeDateModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
@@ -32,7 +33,9 @@ import { DialogHelperService } from 'src/services/dialog-helper.service';
     MatInputModule,
     HttpClientModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   exports: [
     // Animation Module
@@ -49,11 +52,14 @@ import { DialogHelperService } from 'src/services/dialog-helper.service';
     MatInputModule,
     HttpClientModule,
     ReactiveFormsModule,
-    MatDialogModule
+    MatDialogModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   providers: [
     ProductService,
-    DialogHelperService
+    DialogHelperService,
+    CampaignService
   ],
   entryComponents: [
     ConfirmationDialogComponent,
