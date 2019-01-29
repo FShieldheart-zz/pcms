@@ -14,7 +14,7 @@ export class ListCampaignComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
 
-  displayedColumns: string[] = ['id', 'name', 'actions'];
+  displayedColumns: string[] = ['id', 'name', 'product.name', 'start_date', 'end_date', 'is_active', 'actions'];
   dataSource: MatTableDataSource<any>;
 
   campaignLength: number;

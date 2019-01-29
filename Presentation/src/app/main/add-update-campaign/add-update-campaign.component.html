@@ -9,7 +9,7 @@
 <div class="campaign-container">
   <mat-form-field hintLabel="{{'Max ' + maxLengthValue + ' characters'}}">
     <input [formControl]="nameFC" matInput #input maxlength="maxLengthValue" placeholder="Campaign name">
-    <mat-hint align="end">{{input.value?.length || 0}} / maxLengthValue</mat-hint>
+    <mat-hint align="end">{{input.value?.length || 0}} / {{maxLengthValue}}</mat-hint>
   </mat-form-field>
   <mat-error *ngIf="nameFC.touched && nameFC.hasError('required')">
     Name is required.
@@ -27,7 +27,18 @@
     <mat-datepicker-toggle matSuffix [for]="endDatePicker"></mat-datepicker-toggle>
     <mat-datepicker #endDatePicker disabled="false"></mat-datepicker>
   </mat-form-field>
+  <mat-form-field class="product-mff">
+    <input type="text" placeholder="Select Product" aria-label="Number" matInput [formControl]="productFC"
+      [matAutocomplete]="productAutoComplete" (input)="onSearchKeywordChange()">
+    <mat-autocomplete autoActiveFirstOption #productAutoComplete="matAutocomplete" [displayWith]="displayProductName">
+      <mat-option (onSelectionChange)="onProductSelect(searchedProduct)" *ngFor="let searchedProduct of searchedProducts"
+        [value]="searchedProduct">
+        {{searchedProduct.name}}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field>
+  <mat-checkbox class="is-active-mcb" [formControl]="isActiveFC">Is Active?</mat-checkbox>
 </div>
-
-<button [disabled]="nameFC.errors || startDateFC.errors || endDateFC.errors" mat-button class="save-button mat-raised-button mat-primary" (click)="saveUpdateCampaign()">{{selectedCampaign
+<button [disabled]="nameFC.errors || startDateFC.errors || endDateFC.errors || productFC.errors || !selectedProduct || !startDateFC.value || !endDateFC.value || !selectedProduct"
+  mat-button class="save-button mat-raised-button mat-primary" (click)="saveUpdateCampaign()">{{selectedCampaign
   ? 'Update' : 'Save'}}</button>

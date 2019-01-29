@@ -3,7 +3,8 @@ import { MessageDialogComponent } from './../main/message-dialog/message-dialog.
 import { ProductService } from 'src/services/product.service';
 import {
   MatButtonModule, MatCheckboxModule, MatMenuModule, MatIconModule,
-  MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule, MatDialogModule, MatDatepickerModule, MatNativeDateModule
+  MatFormFieldModule, MatTableModule, MatPaginatorModule, MatSortModule, MatInputModule,
+  MatDialogModule, MatDatepickerModule, MatNativeDateModule, MatAutocompleteModule
 } from '@angular/material';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
@@ -35,7 +36,8 @@ import { DialogHelperService } from 'src/services/dialog-helper.service';
     ReactiveFormsModule,
     MatDialogModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule
   ],
   exports: [
     // Animation Module
@@ -54,7 +56,8 @@ import { DialogHelperService } from 'src/services/dialog-helper.service';
     ReactiveFormsModule,
     MatDialogModule,
     MatDatepickerModule,
-    MatNativeDateModule
+    MatNativeDateModule,
+    MatAutocompleteModule
   ],
   providers: [
     ProductService,

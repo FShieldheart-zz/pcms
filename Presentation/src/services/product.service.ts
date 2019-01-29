@@ -27,6 +27,18 @@ export class ProductService {
       );
   }
 
+  search(keyword: string): Observable<Product[]> {
+    return this._httpClient.get<Product[]>(baseEnvironment.productURL + 'search' + '?searchKeyword=' + keyword)
+    .pipe(
+      retry(baseEnvironment.retryLimit),
+      catchError((error) => {
+        // TODO: Error Logging
+        console.error(error);
+        throw new Error('Searching products encountered a fatal error');
+      })
+    );
+  }
+
   countAll(): Observable<number> {
     return this._httpClient.get<number>(baseEnvironment.productURL + 'count')
       .pipe(

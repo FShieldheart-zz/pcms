@@ -16,7 +16,7 @@ namespace Structure.Domain.Classes
         public string Name { get; set; }
 
         [OneToMany(CascadeOperations = CascadeOperation.All)]
-        public IList<Campaign> Campaigns { get; set; }
+        public List<Campaign> Campaigns { get; set; }
 
         public override string ToString()
         {

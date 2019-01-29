@@ -32,7 +32,7 @@ export const MainRoutes: Routes =
             component: AddUpdateCampaignComponent
         },
         {
-            path: 'update-product',
+            path: 'update-campaign',
             component: AddUpdateCampaignComponent
         }
     ];

@@ -3,6 +3,7 @@ using Service.AccessPoint.Interfaces;
 using Structure.Domain.Classes;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace Service.AccessPoint.Classes
@@ -17,7 +18,7 @@ namespace Service.AccessPoint.Classes
             _productService = productService;
         }
 
-        public async Task<IEnumerable<Campaign>> GetCampaignsAsync(int? page = null, int? pageSize = null)
+        public async Task<IEnumerable<Campaign>> GetCampaignsAsync(int? page = null, int? pageSize = null, bool includeProducts = false)
         {
             if (!page.HasValue)
             {
@@ -29,7 +30,19 @@ namespace Service.AccessPoint.Classes
                 pageSize = 10;
             }
 
-            return await BaseRepository.GetManyAsync(null, p => p.OrderBy(pr => pr.Name), pageSize.Value * page.Value, pageSize.Value);
+            IList<Campaign> campaigns = await BaseRepository.GetManyAsync(null, p => p.OrderBy(pr => pr.Name), pageSize.Value * page.Value, pageSize.Value);
+
+            if (includeProducts)
+            {
+                IEnumerable<int> productIds = campaigns.Select(c => c.ProductId.Value);
+                IEnumerable<Product> products = await _productService.GetProductsAsync(productIds);
+                foreach (Campaign campaign in campaigns)
+                {
+                    campaign.Product = products.FirstOrDefault(p => p.Id.Equals(campaign.ProductId));
+                }
+            }
+
+            return campaigns;
         }
 
         public async Task<int> CountCampaignsAsync()
@@ -37,9 +50,14 @@ namespace Service.AccessPoint.Classes
             return await BaseRepository.CountAsync();
         }
 
-        public async Task<Campaign> GetCampaignAsync(int id)
+        public async Task<Campaign> GetCampaignAsync(int id, bool includeProduct = false)
         {
-            return await BaseRepository.GetSingleAsync(id);
+            Campaign campaign = await BaseRepository.GetSingleAsync(id);
+            if (includeProduct)
+            {
+                campaign.Product = await _productService.GetProductAsync(campaign.ProductId.Value);
+            }
+            return campaign;
         }
 
         public async Task<bool> AddAsync(Campaign campaign)

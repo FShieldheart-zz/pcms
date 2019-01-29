@@ -23,5 +23,9 @@ namespace API.Model.Classes.Persistence
         [Required]
         [DataMember(Name = "product_id")]
         public int? ProductId { get; set; }
+
+        [Required]
+        [DataMember(Name = "is_active")]
+        public bool? IsActive { get; set; }
     }
 }

@@ -32,15 +32,15 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CampaignViewModel>>> Get([FromQuery]int pageIndex = 0, [FromQuery]int pageSize = 10)
         {
-            if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Campaign> campaigns))
+            if (_memoryCache.TryGetValue(Startup.CampaignInMemoryCacheKey, out IEnumerable<Campaign> campaigns))
             {
                 campaigns = campaigns.Skip((pageIndex) * pageSize).Take(pageSize);
             }
             else
             {
-                campaigns = await _campaignService.GetCampaignsAsync();
+                campaigns = await _campaignService.GetCampaignsAsync(null, null, true);
 
-                _memoryCache.Set(Startup.InMemoryCacheKey, campaigns, TimeSpan.FromMinutes(Startup.CacheTimeoutMinute));
+                _memoryCache.Set(Startup.CampaignInMemoryCacheKey, campaigns, TimeSpan.FromMinutes(Startup.CacheTimeoutMinute));
 
                 campaigns = campaigns.Skip((pageIndex) * pageSize).Take(pageSize);
             }
@@ -52,7 +52,7 @@ namespace API.Controllers
         public async Task<ActionResult<int>> Count()
         {
             int campaignCount;
-            if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Campaign> campaigns))
+            if (_memoryCache.TryGetValue(Startup.CampaignInMemoryCacheKey, out IEnumerable<Campaign> campaigns))
             {
                 campaignCount = campaigns.Count();
             }
@@ -68,13 +68,13 @@ namespace API.Controllers
         public async Task<ActionResult<CampaignViewModel>> Get(int id)
         {
             Campaign existedCampaign;
-            if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Campaign> campaigns))
+            if (_memoryCache.TryGetValue(Startup.CampaignInMemoryCacheKey, out IEnumerable<Campaign> campaigns))
             {
                 existedCampaign = campaigns.FirstOrDefault(p => p.Id.Equals(id));
             }
             else
             {
-                existedCampaign = await _campaignService.GetCampaignAsync(id);
+                existedCampaign = await _campaignService.GetCampaignAsync(id, true);
             }
 
             return Ok(_mapper.Map<CampaignViewModel>(existedCampaign));
@@ -96,7 +96,7 @@ namespace API.Controllers
 
             bool insertResult = await _campaignService.AddAsync(campaign);
 
-            _memoryCache.Remove(Startup.InMemoryCacheKey);
+            _memoryCache.Remove(Startup.CampaignInMemoryCacheKey);
 
             return Ok(insertResult);
         }
@@ -109,7 +109,7 @@ namespace API.Controllers
 
             bool updateResult = await _campaignService.UpdateAsync(campaign);
 
-            _memoryCache.Remove(Startup.InMemoryCacheKey);
+            _memoryCache.Remove(Startup.CampaignInMemoryCacheKey);
 
             return Ok(updateResult);
         }
@@ -119,7 +119,7 @@ namespace API.Controllers
         {
             bool deleteResult = await _campaignService.DeleteAsync(id);
 
-            _memoryCache.Remove(Startup.InMemoryCacheKey);
+            _memoryCache.Remove(Startup.CampaignInMemoryCacheKey);
 
             return Ok(deleteResult);
         }

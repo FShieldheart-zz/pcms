@@ -32,7 +32,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductViewModel>>> Get([FromQuery]int pageIndex = 0, [FromQuery]int pageSize = 10)
         {
-            if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Product> products))
+            if (_memoryCache.TryGetValue(Startup.ProductInMemoryCacheKey, out IEnumerable<Product> products))
             {
                 products = products.Skip((pageIndex) * pageSize).Take(pageSize);
             }
@@ -40,7 +40,7 @@ namespace API.Controllers
             {
                 products = await _productService.GetProductsAsync();
 
-                _memoryCache.Set(Startup.InMemoryCacheKey, products, TimeSpan.FromMinutes(Startup.CacheTimeoutMinute));
+                _memoryCache.Set(Startup.ProductInMemoryCacheKey, products, TimeSpan.FromMinutes(Startup.CacheTimeoutMinute));
 
                 products = products.Skip((pageIndex) * pageSize).Take(pageSize);
             }
@@ -52,7 +52,7 @@ namespace API.Controllers
         public async Task<ActionResult<int>> Count()
         {
             int productCount;
-            if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Product> products))
+            if (_memoryCache.TryGetValue(Startup.ProductInMemoryCacheKey, out IEnumerable<Product> products))
             {
                 productCount = products.Count();
             }
@@ -64,11 +64,34 @@ namespace API.Controllers
             return Ok(productCount);
         }
 
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<ProductViewModel>>> Search([FromQuery]string searchKeyword)
+        {
+            if (string.IsNullOrWhiteSpace(searchKeyword))
+            {
+                return BadRequest("Product Search Keyword can not be empty or null.");
+            }
+
+            IEnumerable<Product> seachedProducts;
+
+            if (_memoryCache.TryGetValue(Startup.ProductInMemoryCacheKey, out IEnumerable<Product> products))
+            {
+                seachedProducts = products.Where(p => p.Name.ToLowerInvariant().Contains(searchKeyword.ToLowerInvariant()))
+                    .OrderBy(p => p.Name);
+            }
+            else
+            {
+                seachedProducts = await _productService.SearchProductsAsync(searchKeyword);
+            }
+
+            return Ok(_mapper.Map<IEnumerable<ProductViewModel>>(seachedProducts));
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductViewModel>> Get(int id)
         {
             Product existedProduct;
-            if (_memoryCache.TryGetValue(Startup.InMemoryCacheKey, out IEnumerable<Product> products))
+            if (_memoryCache.TryGetValue(Startup.ProductInMemoryCacheKey, out IEnumerable<Product> products))
             {
                 existedProduct = products.FirstOrDefault(p => p.Id.Equals(id));
             }
@@ -96,7 +119,7 @@ namespace API.Controllers
 
             bool insertResult = await _productService.AddAsync(product);
 
-            _memoryCache.Remove(Startup.InMemoryCacheKey);
+            _memoryCache.Remove(Startup.ProductInMemoryCacheKey);
 
             return Ok(insertResult);
         }
@@ -109,7 +132,7 @@ namespace API.Controllers
 
             bool updateResult = await _productService.UpdateAsync(product);
 
-            _memoryCache.Remove(Startup.InMemoryCacheKey);
+            _memoryCache.Remove(Startup.ProductInMemoryCacheKey);
 
             return Ok(updateResult);
         }
@@ -119,7 +142,7 @@ namespace API.Controllers
         {
             bool deleteResult = await _productService.DeleteAsync(id);
 
-            _memoryCache.Remove(Startup.InMemoryCacheKey);
+            _memoryCache.Remove(Startup.ProductInMemoryCacheKey);
 
             return Ok(deleteResult);
         }

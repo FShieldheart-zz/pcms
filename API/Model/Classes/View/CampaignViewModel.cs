@@ -19,5 +19,8 @@ namespace API.Model.Classes.View
 
         [DataMember(Name = "product")]
         public ProductViewModel Product { get; set; }
+
+        [DataMember(Name = "is_active")]
+        public bool IsActive { get; set; }
     }
 }

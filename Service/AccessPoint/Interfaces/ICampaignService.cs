@@ -9,8 +9,8 @@ namespace Service.AccessPoint.Interfaces
         Task<bool> AddAsync(Campaign campaign);
         Task<int> CountCampaignsAsync();
         Task<bool> DeleteAsync(int id);
-        Task<Campaign> GetCampaignAsync(int id);
-        Task<IEnumerable<Campaign>> GetCampaignsAsync(int? page = null, int? pageSize = null);
+        Task<Campaign> GetCampaignAsync(int id, bool includeProduct = false);
+        Task<IEnumerable<Campaign>> GetCampaignsAsync(int? page = null, int? pageSize = null, bool includeProducts = false);
         Task<bool> UpdateAsync(Campaign campaign);
     }
 }

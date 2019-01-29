@@ -33,6 +33,7 @@ namespace Structure.Domain.Classes
         {
             CreatedDate = DateTime.Now;
             UpdatedDate = DateTime.Now;
+            IsDeleted = false;
         }
     }
 }

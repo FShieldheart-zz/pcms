@@ -23,7 +23,8 @@ namespace API
         private static readonly string _configurationFilePath = "appSettings.json";
         private string _logPath;
 
-        public static readonly string InMemoryCacheKey = "pcms-imck";
+        public static readonly string ProductInMemoryCacheKey = "pcms-imck-product";
+        public static readonly string CampaignInMemoryCacheKey = "pcms-imck-campaign";
         public static string ConnectionString { get; private set; }
         public static long CacheTimeoutMinute { get; private set; }
 
