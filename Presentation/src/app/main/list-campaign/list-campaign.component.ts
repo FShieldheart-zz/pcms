@@ -1,8 +1,9 @@
 import { Campaign } from 'src/models/campaign';
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatPaginator, MatTableDataSource, MatSort, PageEvent } from '@angular/material';
+import { MatPaginator, MatTableDataSource, MatSort, PageEvent, MatCheckboxChange } from '@angular/material';
 import { CampaignService } from 'src/services/campaign.service';
 import { DialogHelperService } from 'src/services/dialog-helper.service';
+import { EventEmitter } from 'events';
 
 @Component({
   selector: 'app-list-campaign',
@@ -19,6 +20,7 @@ export class ListCampaignComponent implements OnInit {
 
   campaignLength: number;
   length: number;
+  campaigns: Campaign[];
 
   constructor(
     private _campaignService: CampaignService,
@@ -35,16 +37,16 @@ export class ListCampaignComponent implements OnInit {
   }
 
   public getServerData(event: PageEvent) {
-    this._campaignService.getAll(event.pageIndex, event.pageSize).subscribe(campaigns => {
-      const existingCampaigns = this.dataSource.data as Campaign[];
-      campaigns.forEach(element => {
-        if (!existingCampaigns.find(p => p.id === element.id)) {
-          existingCampaigns.push(element);
-        }
-      });
-      this.dataSource.data = existingCampaigns;
-      this.length = this.campaignLength;
-    });
+    // this._campaignService.getAll(event.pageIndex, event.pageSize).subscribe(campaigns => {
+    //   const existingCampaigns = this.dataSource.data as Campaign[];
+    //   campaigns.forEach(element => {
+    //     if (!existingCampaigns.find(p => p.id === element.id)) {
+    //       existingCampaigns.push(element);
+    //     }
+    //   });
+    //   this.dataSource.data = existingCampaigns;
+    //   this.length = this.campaignLength;
+    // });
     return event;
   }
 
@@ -66,8 +68,9 @@ export class ListCampaignComponent implements OnInit {
       },
       () => {
         // Retrieving first page of the data following the counting
-        this._campaignService.getAll(0, 2).subscribe(
+        this._campaignService.getAll().subscribe(
           campaigns => {
+            this.campaigns = campaigns;
             this.dataSource = new MatTableDataSource<Campaign>(campaigns);
             this.dataSource.paginator = this.paginator;
             this.dataSource.sort = this.sort;
@@ -102,6 +105,14 @@ export class ListCampaignComponent implements OnInit {
           this._dialogHelperService.showMessageDialog(250, error.message);
         }
       );
+  }
+
+  isActiveChange(event: MatCheckboxChange) {
+    if (event.checked) {
+      this.dataSource = new MatTableDataSource<Campaign>(this.campaigns.filter(c => c.is_active === event.checked));
+    } else {
+      this.dataSource = new MatTableDataSource<Campaign>(this.campaigns);
+    }
   }
 
 }

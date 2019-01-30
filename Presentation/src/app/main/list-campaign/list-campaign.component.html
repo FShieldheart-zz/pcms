@@ -11,6 +11,9 @@
   <mat-form-field>
     <input matInput (keyup)="applyFilter($event.target.value)" placeholder="Filter">
   </mat-form-field>
+  <div class="is-active-d">
+    <mat-checkbox (change)="isActiveChange($event)">Is Active</mat-checkbox>
+  </div>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" matSort>
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header> No </th>

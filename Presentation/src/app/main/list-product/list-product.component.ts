@@ -35,16 +35,16 @@ export class ListProductComponent implements OnInit {
   }
 
   public getServerData(event: PageEvent) {
-    this._productService.getAll(event.pageIndex, event.pageSize).subscribe(products => {
-      const existingProducts = this.dataSource.data as Product[];
-      products.forEach(element => {
-        if (!existingProducts.find(p => p.id === element.id)) {
-          existingProducts.push(element);
-        }
-      });
-      this.dataSource.data = existingProducts;
-      this.length = this.productLength;
-    });
+    // this._productService.getAll(event.pageIndex, event.pageSize).subscribe(products => {
+    //   const existingProducts = this.dataSource.data as Product[];
+    //   products.forEach(element => {
+    //     if (!existingProducts.find(p => p.id === element.id)) {
+    //       existingProducts.push(element);
+    //     }
+    //   });
+    //   this.dataSource.data = existingProducts;
+    //   this.length = this.productLength;
+    // });
     return event;
   }
 
