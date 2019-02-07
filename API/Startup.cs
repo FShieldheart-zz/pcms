@@ -14,6 +14,7 @@ using Service.AccessPoint.Classes;
 using Service.AccessPoint.Interfaces;
 using Structure.Domain.Classes;
 using Structure.Model.Interfaces;
+using Swashbuckle.AspNetCore.Swagger;
 using System.IO;
 
 namespace API
@@ -60,6 +61,11 @@ namespace API
                        .WithHeaders(_corsHeaders);
             }));
 
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "PCMS API", Version = "v1" });
+            });
+
             MapperConfiguration mappingConfig = new MapperConfiguration(mc =>
             {
                 mc.AddProfile(new DomainProfile());
@@ -93,6 +99,14 @@ namespace API
             app.UseCors("PCMSPolicy");
 
             app.UseMvc();
+
+            app.UseSwagger();
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "PCMS API V1");
+                c.DocumentTitle = "PCMS API Dynamic Documentation";
+            });
 
             loggerFactory.AddFile(_logPath);
         }
