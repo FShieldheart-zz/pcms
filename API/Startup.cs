@@ -22,6 +22,9 @@ namespace API
     {
         private static readonly string _configurationFilePath = "appSettings.json";
         private string _logPath;
+        private static string[] _corsOrigins;
+        private static string[] _corsMethods;
+        private static string[] _corsHeaders;
 
         public static readonly string ProductInMemoryCacheKey = "pcms-imck-product";
         public static readonly string CampaignInMemoryCacheKey = "pcms-imck-campaign";
@@ -42,6 +45,9 @@ namespace API
             ConnectionString = configurationJson["SqliteConnectionString"].ToString();
             _logPath = configurationJson["LoggingPath"].ToString();
             CacheTimeoutMinute = long.Parse(configurationJson["CacheTimeoutMinute"].ToString());
+            _corsOrigins = configurationJson["CORS"].Origins.ToObject<string[]>();
+            _corsMethods = configurationJson["CORS"].Methods.ToObject<string[]>();
+            _corsHeaders = configurationJson["CORS"].Headers.ToObject<string[]>();
         }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -49,9 +55,9 @@ namespace API
         {
             services.AddCors(o => o.AddPolicy("PCMSPolicy", builder =>
             {
-                builder.AllowAnyOrigin()
-                       .AllowAnyMethod()
-                       .AllowAnyHeader();
+                builder.WithOrigins(_corsOrigins)
+                       .WithMethods(_corsMethods)
+                       .WithHeaders(_corsHeaders);
             }));
 
             MapperConfiguration mappingConfig = new MapperConfiguration(mc =>
