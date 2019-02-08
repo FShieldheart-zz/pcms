@@ -15,7 +15,6 @@ namespace API.Controllers
 {
     [Route("api/v1/[controller]")]
     [ApiController]
-
     public class CampaignController : ControllerBase
     {
         private readonly ICampaignService _campaignService;
