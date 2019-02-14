@@ -47,6 +47,8 @@ namespace API.Controllers
             return Ok(_mapper.Map<IEnumerable<CampaignViewModel>>(campaigns));
         }
 
+
+
         [HttpGet("count")]
         public async Task<ActionResult<int>> Count()
         {
@@ -89,6 +91,10 @@ namespace API.Controllers
             else if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState.GetErrors());
+            }
+            else if (campaignPersistenceModel.StartDate.Value > campaignPersistenceModel.EndDate.Value)
+            {
+                return BadRequest("Campaign start date should be smaller or equal to the end date.");
             }
 
             Campaign campaign = _mapper.Map<Campaign>(campaignPersistenceModel);
